@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image: postgres
+    container_name: ppe11-postgres
+    environment:
+      POSTGRES_USER: ppe11
+      POSTGRES_PASSWORD: ppe11
+      POSTGRES_DB: ppe11
+    ports:
+      - "5432:5432"
