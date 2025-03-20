@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
+import slug from 'slug';
 import { signupSchema } from '../schemas/signup';
-import { findUserByEmail } from '../services/user';
+import { findUserByEmail, findUserBySlug } from '../services/user';
 
 export const signup = async (request: Request, response: Response) => {
     // Validar os dados recebidos
@@ -13,11 +14,22 @@ export const signup = async (request: Request, response: Response) => {
     }
     // verificar email
     const hasEmail = await findUserByEmail(safeData.data.email);
-    if(hasEmail) {
+    if (hasEmail) {
         response.status(409).json({ error: 'E-mail já cadastrado' });
-        return
+        return;
     }
     // verificar slug
+    let genSlug = true;
+    let userSlug = slug(safeData.data.name);
+    while (genSlug) {
+        const hasSlug = await findUserBySlug(userSlug);
+        if (hasSlug) {
+            const slugSuffix = Math.floor(Math.random() * 999999).toString();
+            userSlug = slug(safeData.data.name + slugSuffix);
+        } else {
+            genSlug = false;
+        }
+    }
     // gerar hash da senha
     // cria o usuário
     // cria o token
