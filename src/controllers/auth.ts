@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { signupSchema } from '../schemas/signup';
+import { findUserByEmail } from '../services/user';
 
 export const signup = async (request: Request, response: Response) => {
     // Validar os dados recebidos
@@ -11,6 +12,11 @@ export const signup = async (request: Request, response: Response) => {
         return;
     }
     // verificar email
+    const hasEmail = await findUserByEmail(safeData.data.email);
+    if(hasEmail) {
+        response.status(409).json({ error: 'E-mail já cadastrado' });
+        return
+    }
     // verificar slug
     // gerar hash da senha
     // cria o usuário
