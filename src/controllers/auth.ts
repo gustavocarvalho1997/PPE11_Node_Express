@@ -3,6 +3,7 @@ import type { Request, Response } from 'express';
 import slug from 'slug';
 import { signupSchema } from '../schemas/signup';
 import { createUser, findUserByEmail, findUserBySlug } from '../services/user';
+import { createJWT } from '../utils/jwt';
 
 export const signup = async (request: Request, response: Response) => {
     // Validar os dados recebidos
@@ -41,7 +42,7 @@ export const signup = async (request: Request, response: Response) => {
         password: hashPassword,
     });
     // cria o token
-    const token = '';
+    const token = createJWT(userSlug);
     // retorna o resultado {token, user}
     response.status(201).json({
         token,
