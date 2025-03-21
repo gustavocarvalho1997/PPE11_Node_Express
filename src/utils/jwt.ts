@@ -1,4 +1,4 @@
-import type { NextFunction, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { findUserBySlug } from '../services/user';
 import type { ExtendedRequest } from '../types/extended-request';
@@ -40,6 +40,4 @@ export const verifyJWT = (
             next();
         }
     );
-
-    next();
 };
