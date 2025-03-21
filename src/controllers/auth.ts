@@ -1,6 +1,7 @@
-import { hash } from 'bcrypt-ts';
+import { compare, hash } from 'bcrypt-ts';
 import type { Request, Response } from 'express';
 import slug from 'slug';
+import { signinSchema } from '../schemas/signin';
 import { signupSchema } from '../schemas/signup';
 import { createUser, findUserByEmail, findUserBySlug } from '../services/user';
 import { createJWT } from '../utils/jwt';
@@ -50,6 +51,39 @@ export const signup = async (request: Request, response: Response) => {
             name: newUser.name,
             slug: newUser.slug,
             avatar: newUser.avatar,
+        },
+    });
+};
+
+export const signin = async (request: Request, response: Response) => {
+    const safeData = signinSchema.safeParse(request.body);
+    if (!safeData.success) {
+        response
+            .status(400)
+            .json({ error: safeData.error.flatten().fieldErrors });
+        return;
+    }
+
+    const user = await findUserByEmail(safeData.data.email);
+    if (!user) {
+        response.status(401).json({ error: 'E-mail ou senha inválidos' });
+        return;
+    }
+
+    const verifyPassword = await compare(safeData.data.password, user.password);
+    if (!verifyPassword) {
+        response.status(401).json({ error: 'E-mail ou senha inválidos' });
+        return;
+    }
+
+    const token = createJWT(user.slug);
+
+    response.json({
+        token,
+        user: {
+            name: user.name,
+            slug: user.slug,
+            avatar: user.avatar,
         },
     });
 };
