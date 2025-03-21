@@ -1,7 +1,8 @@
+import { hash } from 'bcrypt-ts';
 import type { Request, Response } from 'express';
 import slug from 'slug';
 import { signupSchema } from '../schemas/signup';
-import { findUserByEmail, findUserBySlug } from '../services/user';
+import { createUser, findUserByEmail, findUserBySlug } from '../services/user';
 
 export const signup = async (request: Request, response: Response) => {
     // Validar os dados recebidos
@@ -31,8 +32,23 @@ export const signup = async (request: Request, response: Response) => {
         }
     }
     // gerar hash da senha
+    const hashPassword = await hash(safeData.data.password, 10);
     // cria o usuário
+    const newUser = await createUser({
+        slug: userSlug,
+        name: safeData.data.name,
+        email: safeData.data.email,
+        password: hashPassword,
+    });
     // cria o token
+    const token = '';
     // retorna o resultado {token, user}
-    response.json({});
+    response.status(201).json({
+        token,
+        user: {
+            name: newUser.name,
+            slug: newUser.slug,
+            avatar: newUser.avatar,
+        },
+    });
 };
