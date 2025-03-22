@@ -61,8 +61,39 @@ export const findAnswersFromTweet = async (id: number) => {
             answerOf: id,
         },
     });
-    for(const tweetIndex in tweets){
-        tweets[tweetIndex].user.avatar = getPublicURL(tweets[tweetIndex].user.avatar);
+    for (const tweetIndex in tweets) {
+        tweets[tweetIndex].user.avatar = getPublicURL(
+            tweets[tweetIndex].user.avatar
+        );
     }
     return tweets;
+};
+
+export const checkIfTweetIsLikedByUser = async (slug: string, id: number) => {
+    const isLiked = await prisma.tweetLike.findFirst({
+        where: {
+            tweetId: id,
+            userSlug: slug,
+        },
+    });
+
+    return !!isLiked;
+};
+
+export const unlikeTweet = async (slug: string, id: number) => {
+    await prisma.tweetLike.deleteMany({
+        where: {
+            tweetId: id,
+            userSlug: slug,
+        },
+    });
+};
+
+export const likeTweet = async (slug: string, id: number) => {
+    await prisma.tweetLike.create({
+        data: {
+            tweetId: id,
+            userSlug: slug,
+        },
+    });
 };
