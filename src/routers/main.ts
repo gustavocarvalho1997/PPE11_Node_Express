@@ -13,7 +13,7 @@ mainRouter.post('/auth/signup', authController.signup);
 mainRouter.post('/auth/signin', authController.signin);
 
 mainRouter.post('/tweet', verifyJWT, tweetController.addTweet);
-// mainRouter.get('/tweet/:id');
+mainRouter.get('/tweet/:id', verifyJWT, tweetController.getTweet);
 // mainRouter.get('/tweet/:id/answers');
 // mainRouter.post('/tweet/:id/like');
 
