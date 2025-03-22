@@ -14,7 +14,7 @@ mainRouter.post('/auth/signin', authController.signin);
 
 mainRouter.post('/tweet', verifyJWT, tweetController.addTweet);
 mainRouter.get('/tweet/:id', verifyJWT, tweetController.getTweet);
-// mainRouter.get('/tweet/:id/answers');
+mainRouter.get('/tweet/:id/answers', verifyJWT, tweetController.getAnswers);
 // mainRouter.post('/tweet/:id/like');
 
 // mainRouter.get('/user/:slug');
