@@ -2,6 +2,7 @@ import { Router } from 'express';
 import * as authController from '../controllers/auth';
 import * as pingController from '../controllers/ping';
 import * as tweetController from '../controllers/tweet';
+import * as userController from '../controllers/user';
 import { verifyJWT } from '../utils/jwt';
 
 export const mainRouter = Router();
@@ -17,7 +18,7 @@ mainRouter.get('/tweet/:id', verifyJWT, tweetController.getTweet);
 mainRouter.get('/tweet/:id/answers', verifyJWT, tweetController.getAnswers);
 mainRouter.post('/tweet/:id/like', verifyJWT, tweetController.likeToggle);
 
-// mainRouter.get('/user/:slug');
+mainRouter.get('/user/:slug', verifyJWT, userController.getUser);
 // mainRouter.get('/user/:slug/tweets');
 // mainRouter.post('/user/:slug/follow');
 // mainRouter.put('/user');
