@@ -97,3 +97,25 @@ export const likeTweet = async (slug: string, id: number) => {
         },
     });
 };
+
+export const findTweetsByUser = async (
+    slug: string,
+    currentPage: number,
+    perPage: number
+) => {
+    const tweets = await prisma.tweet.findMany({
+        include: {
+            likes: {
+                select: {
+                    userSlug: true,
+                },
+            },
+        },
+        where: { userSlug: slug, answerOf: 0 },
+        orderBy: { createdAt: 'desc' },
+        skip: currentPage * perPage,
+        take: perPage,
+    });
+
+    return tweets;
+};
