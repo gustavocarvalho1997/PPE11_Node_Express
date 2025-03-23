@@ -3,6 +3,7 @@ import * as authController from '../controllers/auth';
 import * as feedController from '../controllers/feed';
 import * as pingController from '../controllers/ping';
 import * as searchController from '../controllers/search';
+import * as trendController from '../controllers/trend';
 import * as tweetController from '../controllers/tweet';
 import * as userController from '../controllers/user';
 import { verifyJWT } from '../utils/jwt';
@@ -29,5 +30,5 @@ mainRouter.put('/user', verifyJWT, userController.updateUser);
 
 mainRouter.get('/feed', verifyJWT, feedController.getFeed);
 mainRouter.get('/search', verifyJWT, searchController.searchTweets);
-// mainRouter.get('/trending');
+mainRouter.get('/trending', verifyJWT, trendController.getTrends);
 // mainRouter.get('/suggestions');
