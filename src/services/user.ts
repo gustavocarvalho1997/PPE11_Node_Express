@@ -1,5 +1,6 @@
 import type { Prisma } from '@prisma/client';
 import slug from 'slug';
+import { getUserFollowing } from '../controllers/user';
 import { prisma } from '../utils/prisma';
 import { getPublicURL } from '../utils/url';
 
@@ -123,4 +124,30 @@ export const updateUserInfo = async (
         },
         data,
     });
+};
+
+export const getUserSuggestions = async (slug: string) => {
+    const following = await getUserFollowing(slug);
+    const followingPlusMe = [...following, slug];
+
+    type Suggestion = Pick<
+        Prisma.UserGetPayload<Prisma.UserDefaultArgs>,
+        'name' | 'avatar' | 'slug'
+    >;
+
+    const suggestions: Suggestion[] = await prisma.$queryRaw`
+        SELECT
+            name, avatar, slug
+        FROM "users"
+        WHERE slug NOT IN (${followingPlusMe.join(',')})
+        ORDER BY RANDOM()
+        LIMIT 2`;
+
+    for (const sugIndex in suggestions) {
+        suggestions[sugIndex].avatar = getPublicURL(
+            suggestions[sugIndex].avatar
+        );
+    }
+
+    return suggestions;
 };
