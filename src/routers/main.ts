@@ -8,6 +8,7 @@ import * as trendController from '../controllers/trend';
 import * as tweetController from '../controllers/tweet';
 import * as userController from '../controllers/user';
 import { verifyJWT } from '../utils/jwt';
+import { upload } from '../utils/multer';
 
 export const mainRouter = Router();
 
@@ -26,10 +27,15 @@ mainRouter.get('/user/:slug', verifyJWT, userController.getUser);
 mainRouter.get('/user/:slug/tweets', verifyJWT, userController.getUserTweets);
 mainRouter.post('/user/:slug/follow', verifyJWT, userController.followToggle);
 mainRouter.put('/user', verifyJWT, userController.updateUser);
-// mainRouter.put('/user/avatar');
+mainRouter.put('/user/avatar');
 // mainRouter.put('/user/cover');
 
 mainRouter.get('/feed', verifyJWT, feedController.getFeed);
 mainRouter.get('/search', verifyJWT, searchController.searchTweets);
 mainRouter.get('/trending', verifyJWT, trendController.getTrends);
-mainRouter.get('/suggestions', verifyJWT, suggestionController.getSuggestions);
+mainRouter.get(
+    '/suggestions',
+    verifyJWT,
+    upload.single('image'),
+    suggestionController.getSuggestions
+);

@@ -9,10 +9,13 @@ import {
     getUserFollowersCount,
     getUserFollowingCount,
     getUserTweetCount,
+    saveUploadAvatar,
+    saveUploadCover,
     unfollow,
     updateUserInfo,
 } from '../services/user';
 import type { ExtendedRequest } from '../types/extended-request';
+import { checkIfFileExists, removeFileFromFolder } from '../utils/multer';
 import { prisma } from '../utils/prisma';
 
 export const getUser = async (request: ExtendedRequest, response: Response) => {
@@ -104,4 +107,44 @@ export const getUserFollowing = async (slug: string) => {
     }
 
     return following;
+};
+
+export const uploadAvatar = async (
+    request: ExtendedRequest,
+    response: Response
+) => {
+    const file = request.file?.filename;
+    if (!file) {
+        response.status(400).json({ message: 'File not found' });
+        return;
+    }
+
+    const user = await findUserBySlug(request.userSlug as string);
+    const hasFile = await checkIfFileExists(user?.avatar as string);
+    if (hasFile) {
+        await removeFileFromFolder(hasFile);
+    }
+
+    await saveUploadAvatar(user?.slug as string, file);
+    response.status(200).json({ message: 'Avatar uploaded' });
+};
+
+export const uploadCover = async (
+    request: ExtendedRequest,
+    response: Response
+) => {
+    const file = request.file?.filename;
+    if (!file) {
+        response.status(400).json({ message: 'File not found' });
+        return;
+    }
+
+    const user = await findUserBySlug(request.userSlug as string);
+    const hasFile = await checkIfFileExists(user?.cover as string);
+    if (hasFile) {
+        await removeFileFromFolder(hasFile);
+    }
+
+    await saveUploadCover(user?.slug as string, file);
+    response.status(200).json({ message: 'Cover uploaded' });
 };

@@ -151,3 +151,25 @@ export const getUserSuggestions = async (slug: string) => {
 
     return suggestions;
 };
+
+export const saveUploadAvatar = async (slug: string, file: string) => {
+    await prisma.user.update({
+        where: {
+            slug,
+        },
+        data: {
+            avatar: file,
+        },
+    });
+};
+
+export const saveUploadCover = async (slug: string, file: string) => {
+    await prisma.user.update({
+        where: {
+            slug,
+        },
+        data: {
+            cover: file,
+        },
+    });
+};
