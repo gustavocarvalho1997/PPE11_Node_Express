@@ -8,3 +8,34 @@ services:
       POSTGRES_DB: ppe11
     ports:
       - "5432:5432"
+    networks:
+      - app-network
+
+  api:
+    image: node:22  # Usando a versão 22 do Node.js
+    container_name: ppe11-api
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=development
+      - BASE_URL=http://localhost:3000
+      - DATABASE_URL=postgresql://ppe11:ppe11@postgres:5432/ppe11?schema=public
+      - JWT_SECRET=awebwefba189@#$%ebfsxefgb
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    command: >
+      sh -c "
+        npm install &&
+        npx prisma migrate dev &&
+        npm run dev
+      "
+
+networks:
+  app-network:
+    driver: bridge
