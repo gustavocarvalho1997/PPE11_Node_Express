@@ -13,6 +13,7 @@ import {
     updateUserInfo,
 } from '../services/user';
 import type { ExtendedRequest } from '../types/extended-request';
+import { prisma } from '../utils/prisma';
 
 export const getUser = async (request: ExtendedRequest, response: Response) => {
     const { slug } = request.params;
@@ -89,4 +90,18 @@ export const updateUser = async (
     await updateUserInfo(request.userSlug as string, safeData.data);
 
     response.status(200).json({ message: 'User updated' });
+};
+
+export const getUserFollowing = async (slug: string) => {
+    const following = [];
+    const reqFollow = await prisma.follow.findMany({
+        select: { user2Slug: true },
+        where: { user1Slug: slug },
+    });
+
+    for (const user of reqFollow) {
+        following.push(user.user2Slug);
+    }
+
+    return following;
 };

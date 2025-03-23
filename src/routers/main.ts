@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import * as authController from '../controllers/auth';
+import * as feedController from '../controllers/feed';
 import * as pingController from '../controllers/ping';
 import * as tweetController from '../controllers/tweet';
 import * as userController from '../controllers/user';
@@ -25,7 +26,7 @@ mainRouter.put('/user', verifyJWT, userController.updateUser);
 // mainRouter.put('/user/avatar');
 // mainRouter.put('/user/cover');
 
-// mainRouter.get('/feed');
+mainRouter.get('/feed', verifyJWT, feedController.getFeed);
 // mainRouter.get('/search');
 // mainRouter.get('/trending');
 // mainRouter.get('/suggestions');
